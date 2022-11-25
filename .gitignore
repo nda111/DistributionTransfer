@@ -130,3 +130,7 @@ dmypy.json
 
 # PyTorch
 *.pth
+
+# Experiments
+log/
+runs/
