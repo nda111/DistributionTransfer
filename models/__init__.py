@@ -14,8 +14,8 @@ def __kaiming_normal(module: nn.Module):
             nn.init.kaiming_normal_(p)
 
 
-def __get_gscnn(**_):
-    info = torch.load('./models/gscnn/checkpoints/best_cityscapes_checkpoint.pth')
+def __get_gscnn(**kwargs):
+    info = torch.load(kwargs['params'])
     renamed_state_dict = OrderedDict(**{
         name[7:]: tensor for name, tensor in info['state_dict'].items()
     })
@@ -27,8 +27,8 @@ def __get_gscnn(**_):
 
 def __get_unet(**kwargs):
     net = smp.Unet(
-        encoder_name='xception',
         classes=19,
+        in_channels=3,
         encoder_weights=None,
         activation='sigmoid',
         **kwargs
@@ -40,8 +40,8 @@ def __get_unet(**kwargs):
 
 def __get_unet_pp(**kwargs):
     net = smp.UnetPlusPlus(
-        encoder_name='xception',
         classes=19,
+        in_channels=3,
         encoder_weights=None,
         activation='sigmoid',
         **kwargs
@@ -60,7 +60,7 @@ model_map = {
 
 def get_model(name: str, device: str=None, **kwargs):
     if name not in model_map:
-        raise NotImplementedError(f'\'{name}\' is not implemented.')
+        raise NotImplementedError(f'\'{name}\' is not implemented. Supports ' + ', '.join(model_map.keys()))
     
     if device is None:
         device = 'cpu'
