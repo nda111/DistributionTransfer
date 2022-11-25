@@ -2,7 +2,7 @@ import os.path as osp
 
 import torch
 from torch.utils.data import Dataset
-from torchvision.io import read_image
+import cv2
 
 
 class RellisImage(Dataset):
@@ -57,7 +57,7 @@ class RellisImage(Dataset):
         print(f'Rellis-3D_{self.split}: found {len(self.filenames)} samples.')
         
         self.load_x = RellisImage.__read_image
-        self.load_y = RellisImage.__read_semantic_image
+        self.load_y = RellisImage.__read_image
             
     def __getitem__(self, idx):
         x_filename, y_filename = self.filenames[idx]
@@ -70,12 +70,9 @@ class RellisImage(Dataset):
     
     def __len__(self):
         return len(self.filenames)
-
-    @staticmethod
-    def __read_image(filename):
-        return read_image(filename).float() / 255.0
     
     @staticmethod
-    def __read_semantic_image(filename):
-        img = read_image(filename)[0].long()
-        return RellisImage.label_map[img]
+    def __read_image(filename):
+        img = cv2.imread(filename)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        return img
