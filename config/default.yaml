@@ -1,0 +1,40 @@
+exp:
+  directory: "{date}"
+  name: distilation_gscnn_xception-unet++
+  suffix: null
+  tensorboard: yes
+
+env:
+  device: cpu
+  seed: null
+  deterministic: no
+  benchmark: no
+
+data:
+  input_size: [1200, 1920]
+  num_workers: 10
+  batch_size: 32
+
+teacher: 
+  params: ./models/gscnn/checkpoints/best_cityscapes_checkpoint.pth
+
+student: 
+  architect: unet++
+  encoder: xception
+  args: { }
+
+optim:
+  name: sgd
+  args:
+    lr: 1.0E-3
+
+train:
+  num_epochs: 10
+  ground_truth_loss: cross_entropy
+  teacher_loss: cross_entropy
+
+eval:
+  - id: miou
+    name: intersection_over_union
+    args:
+      class_id: -1
